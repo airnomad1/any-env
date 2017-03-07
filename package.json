@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/airnomad1/npm-config.git"
+    "url": "git+https://github.com/airnomad1/any-env.git"
   },
   "keywords": [
     "node",
@@ -22,9 +22,9 @@
   "author": "Darshana Peiris <airnomad1@gmail.com> (https://www.npmjs.com/~airnomad1)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/airnomad1/any-config/issues"
+    "url": "https://github.com/airnomad1/any-env/issues"
   },
-  "homepage": "https://github.com/airnomad1/any-config#readme",
+  "homepage": "https://github.com/airnomad1/any-env#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.2.0"
