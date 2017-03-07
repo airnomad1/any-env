@@ -10,21 +10,48 @@
 
 const fs = require('fs');
 const path = require('path');
+const debug = require('debug');
+
+var appConfs = {};
 
 function loadConfigs(confFile) {
     var encoding = 'utf8';
-    var confFile = path.join(process.cwd(), confFile || '.env');
+    var file = decideConfFile(confFile);
 
-    if (fs.existsSync(confFile)) {
-        readConfFile(confFile, encoding, function (readRes) {
+    if (file.type == 'env') {
+        readConfFile(file, encoding, function (readRes) {
             if (readRes.status == 200) {
-                processConf(readRes.data);
+                appConfs = processConf(readRes.data);
             } else {
-                console.log(readRes.error);
+                debug.log(readRes.error);
+            }
+        });
+    } else if (file.type == 'json') {
+        readConfFile(file, encoding, function (readRes) {
+            if (readRes.status == 200) {
+                appConfs = readRes.data;
+            } else {
+                debug.log(readRes.error);
             }
         });
     } else {
-        console.log('No .env file found');
+        debug.log('No .env file found');
+    }
+}
+
+/**
+ * Decide which conf file to use
+ * @param file - file path
+ * **/
+function decideConfFile(file) {
+    // TODO : add support for *.js files
+    var filePath = path.join(process.cwd(), file || '.env');
+
+    if (!fs.existsSync(filePath)) {
+        filePath = path.join(process.cwd(), 'env.json');
+        return fs.existsSync(filePath) ? {file: filePath, type: 'json'} : false;
+    } else {
+        return {file: filePath, type: 'env'};
     }
 }
 
@@ -33,20 +60,33 @@ function loadConfigs(confFile) {
  * @param filePath
  * **/
 
-function readConfFile(filePath, encoding, callback) {
-    var readStream = fs.readFileSync(filePath, encoding);
+function readConfFile(oEnvFile, encoding, callback) {
+    if (oEnvFile.type == 'env') {
+        try {
+            var readStream = fs.readFileSync(oEnvFile.file, encoding);
 
-    var aConfs = [];
+            var aConfs = [];
 
-    var aLines = readStream.split(/(?:\n|\r\n|\r)/g);
+            var aLines = readStream.split(/(?:\n|\r\n|\r)/g);
 
-    aLines.forEach(function (line) {
-        if (line) {
-            aConfs.push(line);
+            aLines.forEach(function (line) {
+                if (line) {
+                    aConfs.push(line);
+                }
+            });
+
+            callback({status: 200, data: aConfs});
+        } catch (e) {
+            callback({status: 400, error: e});
         }
-    });
-
-    callback({status: 200, data: aConfs});
+    } else {
+        try {
+            var oConfs = JSON.parse(fs.readFileSync(oEnvFile.file, encoding));
+            callback({status: 200, data: oConfs});
+        } catch (e) {
+            callback({status: 400, error: e});
+        }
+    }
 }
 
 /**
@@ -64,11 +104,16 @@ function processConf(aConfs) {
         aSplit = aSplit.filter(Boolean);
 
         if (aSplit.length > 1) {
-            process.env[aSplit[0]] = aSplit[1];
+            var key = aSplit[0].replace(' ', '_');
+            oConfs[key] = aSplit[1];
         }
     });
 
     return oConfs;
 }
+
+global.env = function (key) {
+    return appConfs[key];
+};
 
 module.exports.config = loadConfigs;

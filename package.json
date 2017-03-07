@@ -1,7 +1,7 @@
 {
-  "name": "@airnomad1/npm-config",
+  "name": "@airnomad1/any-config",
   "version": "0.0.1",
-  "description": "Node module to maintain configurations in a .env file for different environments.",
+  "description": "Node module to maintain configurations in a .env or .json file for different environments.",
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec"
@@ -19,14 +19,13 @@
   "author": "Darshana Peiris <airnomad1@gmail.com> (https://www.npmjs.com/~airnomad1)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/airnomad1/npm-config/issues"
+    "url": "https://github.com/airnomad1/any-config/issues"
   },
-  "homepage": "https://github.com/airnomad1/npm-config#readme",
+  "homepage": "https://github.com/airnomad1/any-config#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.2.0"
   },
   "dependencies": {
-
   }
 }
