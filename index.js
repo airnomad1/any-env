@@ -15,9 +15,9 @@ const root = require('app-root-path');
 
 var appConfs = {};
 
-function loadConfigs(confFile) {
+function loadConfigs() {
     var encoding = 'utf8';
-    var file = decideConfFile(confFile);
+    var file = decideConfFile();
 
     if (file.type == 'env') {
         readConfFile(file, encoding, function (readRes) {
@@ -44,9 +44,9 @@ function loadConfigs(confFile) {
  * Decide which conf file to use
  * @param file - file path
  * **/
-function decideConfFile(file) {
+function decideConfFile() {
     // TODO : add support for *.js files
-    var filePath = path.join(root.path, file || '.env');
+    var filePath = path.join(root.path, '.env');
 
     if (!fs.existsSync(filePath)) {
         filePath = path.join(root.path, 'env.json');
