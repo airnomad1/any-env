@@ -1,2 +1,2 @@
-# npm-config
-Node module to maintain configurations in a .env file for different environments.
+# anv-env
+Node module to maintain configurations in a .env or .json file for different environments.

@@ -1,6 +1,6 @@
 {
   "name": "@airnomad1/any-config",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Node module to maintain configurations in a .env or .json file for different environments.",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,9 @@
     "npm",
     "config"
   ],
+  "engines": {
+    "node": ">=4.2.4"
+  },
   "author": "Darshana Peiris <airnomad1@gmail.com> (https://www.npmjs.com/~airnomad1)",
   "license": "MIT",
   "bugs": {
