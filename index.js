@@ -1,5 +1,5 @@
 /*
- * npm-config
+ * any-env
  * Copyright(c) 2017 Darshana Peiris <airnomad1@gmail.com>
  * MIT Licensed
  */
