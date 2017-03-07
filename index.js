@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const debug = require('debug');
+const root = require('app-root-path');
 
 var appConfs = {};
 
@@ -45,10 +46,10 @@ function loadConfigs(confFile) {
  * **/
 function decideConfFile(file) {
     // TODO : add support for *.js files
-    var filePath = path.join(process.cwd(), file || '.env');
+    var filePath = path.join(root.path, file || '.env');
 
     if (!fs.existsSync(filePath)) {
-        filePath = path.join(process.cwd(), 'env.json');
+        filePath = path.join(root.path, 'env.json');
         return fs.existsSync(filePath) ? {file: filePath, type: 'json'} : false;
     } else {
         return {file: filePath, type: 'env'};
