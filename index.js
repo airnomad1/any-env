@@ -15,21 +15,22 @@ const root = require('app-root-path');
 
 var appConfs = {};
 
-function loadConfigs() {
+/**
+ * trigger reading conf file
+ * @param {String} confFile - configuration file name
+ **/
+function loadConfigs(confFile) {
+    appConfs = {};
     var encoding = 'utf8';
-    var file = decideConfFile();
 
-    if (file.type == 'env') {
+    confFile = confFile || undefined;
+    var file = decideConfFile(confFile);
+
+    if (file.type == 'env' || file.type == 'json') {
         readConfFile(file, encoding, function (readRes) {
-            if (readRes.status == 200) {
+            if (readRes.status == 200 && file.type == 'env') {
                 appConfs = processConf(readRes.data);
-            } else {
-                debug.log(readRes.error);
-            }
-        });
-    } else if (file.type == 'json') {
-        readConfFile(file, encoding, function (readRes) {
-            if (readRes.status == 200) {
+            } else if (readRes.status == 200 && file.type == 'json') {
                 appConfs = readRes.data;
             } else {
                 debug.log(readRes.error);
@@ -44,15 +45,16 @@ function loadConfigs() {
  * Decide which conf file to use
  * @param file - file path
  * **/
-function decideConfFile() {
+function decideConfFile(file) {
     // TODO : add support for *.js files
-    var filePath = path.join(root.path, '.env');
+
+    var filePath = file || path.join(root.path, '.env');
 
     if (!fs.existsSync(filePath)) {
         filePath = path.join(root.path, 'env.json');
         return fs.existsSync(filePath) ? {file: filePath, type: 'json'} : false;
     } else {
-        return {file: filePath, type: 'env'};
+        return {file: filePath, type: (path.extname(filePath) == '.json') ? 'json' : 'env'};
     }
 }
 
@@ -60,7 +62,6 @@ function decideConfFile() {
  * Read .env file
  * @param filePath
  * **/
-
 function readConfFile(oEnvFile, encoding, callback) {
     if (oEnvFile.type == 'env') {
         try {
@@ -75,14 +76,13 @@ function readConfFile(oEnvFile, encoding, callback) {
                     aConfs.push(line);
                 }
             });
-
             callback({status: 200, data: aConfs});
         } catch (e) {
             callback({status: 400, error: e});
         }
     } else {
         try {
-            var oConfs = JSON.parse(fs.readFileSync(oEnvFile.file, encoding));
+            var oConfs = JSON.parse(JSON.parse(fs.readFileSync(oEnvFile.file, encoding)));
             callback({status: 200, data: oConfs});
         } catch (e) {
             callback({status: 400, error: e});
@@ -94,7 +94,6 @@ function readConfFile(oEnvFile, encoding, callback) {
  * Process conf strings extracted from conf file (.env || env.json)
  * @param conf
  * **/
-
 function processConf(aConfs) {
 
     var oConfs = {};
